@@ -15,7 +15,7 @@ public class Worker extends Thread {
     Subsurface subsurface;
 
     // Heating coefficients for the metal types
-    double c1, c2, c3;
+    double[] heatCoefficients;
 
     // Barrier Object for thread syncronization
     CyclicBarrier barrier;
@@ -24,7 +24,7 @@ public class Worker extends Thread {
         this.subsurface = subsurface;
         this.parent = parent;
         this.temp = temp;
-        c1 = 0.75; c2 = 1.0; c3 = 1.25;
+        heatCoefficients = new double[] {0.75, 1.0, 1.25};
         this.barrier = barrier;
     }
 
@@ -38,7 +38,7 @@ public class Worker extends Thread {
          */
         for (;;) {
             try {
-                System.out.println("yay");
+                calculateRegions();
                 barrier.await();
                 Thread.sleep(1000);
             } catch (Exception e) {
@@ -47,8 +47,31 @@ public class Worker extends Thread {
         }
     }
 
-    double calculateNewTemperature() {
-        return 0;
+    void calculateRegions() {
+        Region[][] surface = temp.surface;
+        for (int i = 0; i < parent.width; i++) { // Width loop
+            for (int j = subsurface.left; j <= subsurface.right; j++) { // Length loop
+                Region region = surface[i][j];
+                double newTemp = calculateTemperature(region);
+                region.setTemperature(newTemp); // NOOOOOOOOOOOOOOOOOOOOOOOOO
+                // Need to set the temperature of the
+            }
+        }
+    }
+
+    double calculateTemperature(Region region) {
+        double newTemp = 0;
+        for (int i = 0; i < heatCoefficients.length; i++) {
+            double cm = heatCoefficients[i];
+            int n = region.neighbors.length;
+            for (int j = 0; j < n; j++) {
+                Region neighbor = region.neighbors[j];
+                double temp_n = neighbor.getTemperature();
+                double pn = neighbor.metalContent[i];
+                newTemp += cm * ((temp_n * pn) / n);
+            }
+        }
+        return newTemp;
     }
 
 }

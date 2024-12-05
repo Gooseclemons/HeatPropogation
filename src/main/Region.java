@@ -22,6 +22,12 @@ public class Region {
         generateMetalContent();
     }
 
+    Region(double temperature) {
+        this.temperature = temperature;
+        metalContent = new double[3];
+        generateMetalContent();
+    }
+
     void generateMetalContent() {
         double remainingContent = 1.00;
         for (int i = 0; i < 2; i++) {
@@ -38,11 +44,15 @@ public class Region {
     }
 
     void printMetalContent() {
-        System.out.println("[" + metalContent[0] + ", " + metalContent[1] + ", " + metalContent[2] + "]");
+        System.out.print("[" + metalContent[0] + ", " + metalContent[1] + ", " + metalContent[2] + "]");
     }
 
     void setNeighbors(Region[] neighbors) {
-        this.neighbors = neighbors;
+        try {
+            this.neighbors = neighbors;
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+        }
     }
 
     void setTemperature(double temperature) {

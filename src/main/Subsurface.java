@@ -16,10 +16,6 @@ public class Subsurface {
         this.right = right;
     }
 
-    Region[] getRegionNeighbors() {
-        return null;
-    }
-
     @Override
     public String toString() {
         return "left: " + left + "   right: " + right;

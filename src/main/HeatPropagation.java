@@ -21,8 +21,8 @@ public class HeatPropagation {
 
     // java.Surface objects, the nextSurface variable acts as a template to map calculated changes onto
     //  before overwriting the currentSurface variable
-    static Surface currentSurface = new Surface(RECT_WIDTH, RECT_LENGTH, num_threads);
-    static Surface nextSurface = new Surface(RECT_WIDTH, RECT_LENGTH, num_threads);
+    static Surface currentSurface = new Surface(RECT_WIDTH, RECT_LENGTH, num_threads, heat1, heat2);
+    static Surface nextSurface = new Surface(RECT_WIDTH, RECT_LENGTH, num_threads, heat1, heat2);
 
     // Worker objects for managing the surfaces
     static Worker[] threads = new Worker[num_threads];
@@ -41,6 +41,7 @@ public class HeatPropagation {
             for (Region region : regions) {
                 region.printMetalContent();
             }
+            System.out.println();
         }
 
         initializeWorkers();
@@ -61,10 +62,12 @@ public class HeatPropagation {
             threads[i].start();
     }
 
+    // Copy may be overwriting current surface to a brand new surface
     static void barrierAction() {
         currentSurface = nextSurface;
-        nextSurface = new Surface(RECT_WIDTH, RECT_LENGTH, num_threads);
+        nextSurface = new Surface(RECT_WIDTH, RECT_LENGTH, num_threads, heat1, heat2);
         barrier = new CyclicBarrier(num_threads, HeatPropagation::barrierAction);
+        currentSurface.printSurfaceTemperatures();
     }
 
 }
