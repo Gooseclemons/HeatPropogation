@@ -32,18 +32,6 @@ public class HeatPropagation {
 
     public static void main(String[] args) {
 
-        currentSurface.createSubsurfaces();
-        for (int i = 0; i < currentSurface.sub_surfaces.length; i++) {
-            System.out.println(currentSurface.sub_surfaces[i].toString());
-        }
-
-        for (Region[] regions : currentSurface.surface) {
-            for (Region region : regions) {
-                region.printMetalContent();
-            }
-            System.out.println();
-        }
-
         initializeWorkers();
         startWorkers();
 
@@ -64,8 +52,7 @@ public class HeatPropagation {
 
     // Copy may be overwriting current surface to a brand new surface
     static void barrierAction() {
-        currentSurface = nextSurface;
-        nextSurface = new Surface(RECT_WIDTH, RECT_LENGTH, num_threads, heat1, heat2);
+        currentSurface.updateTemperatures();
         barrier = new CyclicBarrier(num_threads, HeatPropagation::barrierAction);
         currentSurface.printSurfaceTemperatures();
     }

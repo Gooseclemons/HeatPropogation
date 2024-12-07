@@ -23,6 +23,9 @@ public class Surface {
     //  right region
     Region[][] surface;
 
+    // array to hold the next temperatures for cells until the calculation is done
+    double[][] next_temperatures;
+
     // Sub-surfaces of the surface
     Subsurface[] sub_surfaces;
 
@@ -33,6 +36,7 @@ public class Surface {
         this.width = width;
         this.length = length;
         surface = new Region[width][length];
+        next_temperatures = new double[width][length];
         this.heat1 = heat1;
         this.heat2 = heat2;
 
@@ -47,6 +51,16 @@ public class Surface {
 
         initializeRegions();
         generateRegionNeighbors();
+        createSubsurfaces();
+    }
+
+    /**
+     * Copy constructor for Surface, used in overwriting currentSurface with nextSurface in
+     *  HeatPropagation.barrierAction() without copying by reference
+     */
+    Surface(Surface other) {
+        this(other.width, other.length, other.num_threads, other.heat1, other.heat2);
+        this.surface = other.surface;
     }
 
     void createSubsurfaces() {
@@ -61,6 +75,16 @@ public class Surface {
         for (int i = 0; i < length; i++) {
             for (int j = 0; j < width; j++) {
                 surface[j][i] = new Region();
+            }
+        }
+    }
+
+    void updateTemperatures() {
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < length; j++) {
+                Region region = surface[i][j];
+                double temperature = next_temperatures[i][j];
+                region.setTemperature(temperature);
             }
         }
     }
@@ -93,7 +117,7 @@ public class Surface {
                     neighbors.add(neighbor);
                 }
 
-                // Heated corner cases
+                // Heated corner cases, add bottom left corner later
                 if (i == 0 && j == 0) {
                     Region neighbor = new Region(50);
                     neighbors.add(neighbor);

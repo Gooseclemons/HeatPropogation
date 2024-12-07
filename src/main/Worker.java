@@ -9,7 +9,7 @@ import java.util.concurrent.CyclicBarrier;
 public class Worker extends Thread {
 
     // Parent surface and temp surface to write to
-    Surface parent, temp;
+    Surface parent;
 
     // Subsurface this thread possesses
     Subsurface subsurface;
@@ -23,7 +23,6 @@ public class Worker extends Thread {
     Worker(Subsurface subsurface, Surface parent, Surface temp, CyclicBarrier barrier) {
         this.subsurface = subsurface;
         this.parent = parent;
-        this.temp = temp;
         heatCoefficients = new double[] {0.75, 1.0, 1.25};
         this.barrier = barrier;
     }
@@ -40,7 +39,7 @@ public class Worker extends Thread {
             try {
                 calculateRegions();
                 barrier.await();
-                Thread.sleep(1000);
+                Thread.sleep(10);
             } catch (Exception e) {
 
             }
@@ -48,13 +47,12 @@ public class Worker extends Thread {
     }
 
     void calculateRegions() {
-        Region[][] surface = temp.surface;
+        Region[][] surface = parent.surface;
+        double[][] next_temps = parent.next_temperatures;
         for (int i = 0; i < parent.width; i++) { // Width loop
             for (int j = subsurface.left; j <= subsurface.right; j++) { // Length loop
-                Region region = surface[i][j];
-                double newTemp = calculateTemperature(region);
-                region.setTemperature(newTemp); // NOOOOOOOOOOOOOOOOOOOOOOOOO
-                // Need to set the temperature of the
+                Region parentRegion = surface[i][j];
+                next_temps[i][j] = calculateTemperature(parentRegion);
             }
         }
     }
