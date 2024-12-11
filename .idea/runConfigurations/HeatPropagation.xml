@@ -4,7 +4,7 @@
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
     <option name="MAIN_CLASS_NAME" value="main.HeatPropagation" />
     <module name="HeatPropagation" />
-    <option name="PROGRAM_PARAMETERS" value="--add-modules jdk.incubator.vector" />
+    <option name="VM_PARAMETERS" value="--add-modules jdk.incubator.vector" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

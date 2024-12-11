@@ -119,9 +119,13 @@ public class Surface {
 
                 // Heated corner cases, add bottom left corner later
                 if (i == 0 && j == 0) {
-                    Region neighbor = new Region(50);
+                    Region neighbor = new Region(heat1);
+                    neighbors.add(neighbor);
+                } else if (i == width - 1 && j == length - 1) {
+                    Region neighbor = new Region(heat2);
                     neighbors.add(neighbor);
                 }
+
 
                 region.setNeighbors(Arrays.copyOf(neighbors.toArray(), neighbors.size(), Region[].class));
             }
